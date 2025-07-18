@@ -3,9 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from tutorials.models.user_payment_gateway import UserPaymentGateway
-from tutorials.serializers.payment_gateway_serializer import (
-    UserPaymentGatewaySerializer,
-)
+from tutorials.serializers.payment_gateway_serializer import \
+    UserPaymentGatewaySerializer
 from tutorials.utils.response_helper import error_response, success_response
 
 

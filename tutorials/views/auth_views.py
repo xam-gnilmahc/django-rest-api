@@ -6,7 +6,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from tutorials.serializers.auth_serializers import LoginSerializer, RegisterSerializer
+from tutorials.serializers.auth_serializers import (LoginSerializer,
+                                                    RegisterSerializer)
 from tutorials.utils.response_helper import error_response, success_response
 
 
