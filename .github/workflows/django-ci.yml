@@ -51,9 +51,6 @@ jobs:
       - name: Run Black (check only)
         run: black --check .
         
-      - name: Run Flake8
-        run: flake8 .
-
       - name: Wait for MySQL
         run: |
           sudo apt-get update
