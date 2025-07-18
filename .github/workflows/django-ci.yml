@@ -13,22 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres:13
+      mysql:
+        image: mysql:8
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: mydb
+          MYSQL_ROOT_PASSWORD: Alina123@
+          MYSQL_DATABASE: Django-rest-api
+          MYSQL_USER: root
+          MYSQL_PASSWORD: Alina123@
         ports:
-          - 5432:5432
+          - 3306:3306
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/mydb
+      DATABASE_URL: mysql://root:Alina123@localhost:3306/Django-rest-api
       DEBUG: 'True'
       SECRET_KEY: dummysecret
 
@@ -45,11 +46,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install mysqlclient
 
-      - name: Wait for Postgres
+      - name: Wait for MySQL
         run: |
-          until pg_isready -h localhost -p 5432; do
-            echo "Waiting for postgres..."; sleep 2;
+          for i in {30..0}; do
+            mysqladmin ping -h localhost -uroot -pAlina123@ && break
+            echo "Waiting for MySQL..."
+            sleep 2
           done
 
       - name: Run migrations
