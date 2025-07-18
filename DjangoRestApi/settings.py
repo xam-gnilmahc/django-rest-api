@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 from datetime import timedelta
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -74,7 +74,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
 ]
- 
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = ("http://localhost:8081",)
 
@@ -138,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Asia/Kathmandu'
+TIME_ZONE = "Asia/Kathmandu"
 
 USE_I18N = True
 
@@ -153,5 +153,5 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 
-STRIPE_SECRET_KEY = 'sk_test_xxx...'
-STRIPE_PUBLISHABLE_KEY = 'pk_test_xxx...'
+STRIPE_SECRET_KEY = "sk_test_xxx..."
+STRIPE_PUBLISHABLE_KEY = "pk_test_xxx..."
