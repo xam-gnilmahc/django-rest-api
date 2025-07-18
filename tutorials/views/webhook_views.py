@@ -60,6 +60,7 @@ def github_webhook(request):
         username = pr["user"]["login"]
         action = payload["action"]
         state = pr["state"]
+        url = pr["html_url"]
 
         GithubPRLog.objects.create(
             pr_number=pr_number,
@@ -69,8 +70,8 @@ def github_webhook(request):
             username=username,
             action=action,
             state=state,
+            url=url
         )
-
         return success_response("Pull request data logged")
 
     except Exception as e:

@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from tutorials.models.user_payment_gateway import UserPaymentGateway
-
+from .models import UserPaymentGateway, GithubPRLog
 # Admin branding
 admin.site.site_header = "Max Chamling"
 admin.site.site_title = "My Admin Portal"
@@ -44,3 +43,29 @@ class UserPaymentGatewayAdmin(admin.ModelAdmin):
         return format_html('<span title="{}">{}...</span>', content, content[:50])
 
     short_credentials.short_description = "Credentials"
+    
+    
+@admin.register(GithubPRLog)
+class GithubPRLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "pr_number",
+        "title",
+        "username",
+        "action",
+        "state",
+        "created_at",
+    )
+    list_filter = ("action", "state", "username", "created_at")
+    search_fields = ("pr_number", "title", "username", "pr_url", "body")
+
+    readonly_fields = (
+        "pr_number",
+        "title",
+        "body",
+        "pr_url",
+        "username",
+        "action",
+        "state",
+        "created_at",
+    )
