@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import UserPaymentGateway, GithubPRLog
+from tutorials.models.user_payment_gateway import UserPaymentGateway
+from tutorials.models.webhook import GithubPRLog
 
 # Admin branding
 admin.site.site_header = "Max Chamling"
