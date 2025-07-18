@@ -10,6 +10,7 @@ class GithubPRLog(models.Model):
     action = models.CharField(max_length=50, blank=True, null=True)
     state = models.CharField(max_length=50, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    url= models.TextField(blank=True, null=True)
+    url = models.TextField(blank=True, null=True)
+
     class Meta:
         db_table = "webhook_log"

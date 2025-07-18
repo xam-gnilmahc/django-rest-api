@@ -70,7 +70,7 @@ def github_webhook(request):
             username=username,
             action=action,
             state=state,
-            url=url
+            url=url,
         )
         return success_response("Pull request data logged")
 
