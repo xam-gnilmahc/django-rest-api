@@ -15,4 +15,5 @@ class GithubPRLogSerializer(serializers.ModelSerializer):
             "action",
             "state",
             "created_at",
+            "url",
         ]
