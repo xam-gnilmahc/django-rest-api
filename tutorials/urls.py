@@ -11,8 +11,8 @@ urlpatterns = [
     # Auth routes
     path("api/login", login_view, name="login"),
     path("api/register", register_view, name="register"),
+    path("api/github/feed", github_webhook, name="github_Webhook"),
     path("api/token/refresh", TokenRefreshView.as_view(), name="token_refresh"),
     # Payment gateway routes
     path("api/paymentGateways", userPaymentGateway_list, name="payment_gateways"),
-    path("api/github/feed", github_webhook, name="github_Webhook"),
 ]
