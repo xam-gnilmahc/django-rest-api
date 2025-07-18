@@ -15,25 +15,75 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='UserPaymentGateway',
+            name="UserPaymentGateway",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('payment_gateway_id', models.BigIntegerField()),
-                ('payment_gateway_name', models.CharField(max_length=255)),
-                ('credentials', models.TextField()),
-                ('status', models.CharField(choices=[('0', 'Inactive'), ('1', 'Active')], default='1', max_length=1)),
-                ('is_live_mode', models.CharField(choices=[('0', 'Inactive'), ('1', 'Active')], default='1', max_length=1)),
-                ('has_apple_pay', models.CharField(choices=[('0', 'Inactive'), ('1', 'Active')], default='0', max_length=1)),
-                ('has_google_pay', models.CharField(choices=[('0', 'Inactive'), ('1', 'Active')], default='0', max_length=1)),
-                ('has_card_pay', models.CharField(choices=[('0', 'Inactive'), ('1', 'Active')], default='1', max_length=1)),
-                ('created_by', models.BigIntegerField(default=0)),
-                ('updated_by', models.BigIntegerField(default=0)),
-                ('created_at', models.DateTimeField(blank=True, null=True)),
-                ('updated_at', models.DateTimeField(blank=True, null=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payment_gateways', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("payment_gateway_id", models.BigIntegerField()),
+                ("payment_gateway_name", models.CharField(max_length=255)),
+                ("credentials", models.TextField()),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("0", "Inactive"), ("1", "Active")],
+                        default="1",
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "is_live_mode",
+                    models.CharField(
+                        choices=[("0", "Inactive"), ("1", "Active")],
+                        default="1",
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "has_apple_pay",
+                    models.CharField(
+                        choices=[("0", "Inactive"), ("1", "Active")],
+                        default="0",
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "has_google_pay",
+                    models.CharField(
+                        choices=[("0", "Inactive"), ("1", "Active")],
+                        default="0",
+                        max_length=1,
+                    ),
+                ),
+                (
+                    "has_card_pay",
+                    models.CharField(
+                        choices=[("0", "Inactive"), ("1", "Active")],
+                        default="1",
+                        max_length=1,
+                    ),
+                ),
+                ("created_by", models.BigIntegerField(default=0)),
+                ("updated_by", models.BigIntegerField(default=0)),
+                ("created_at", models.DateTimeField(blank=True, null=True)),
+                ("updated_at", models.DateTimeField(blank=True, null=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payment_gateways",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'user_payment_gateway',
+                "db_table": "user_payment_gateway",
             },
         ),
     ]
