@@ -119,14 +119,15 @@ WSGI_APPLICATION = "DjangoRestApi.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.uehdbhoijqdvjnrnlrlu',
-        'PASSWORD': 'Maxrai123@',
-        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',  # e.g., db.uehdbhoijqdvjnrnlrlu.supabase.co
-        'PORT': '6543',
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
+
 
 
 
