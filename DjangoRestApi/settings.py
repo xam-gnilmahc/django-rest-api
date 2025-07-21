@@ -30,7 +30,7 @@ SECRET_KEY = "7reb9d$g$mhgw0_)@y%+jh=$bnj9f*)v4zz1b4b-p+^^=zd8(d"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-rest-api-8c23.onrender.com','https://shopverse-dev.netlify.app']
 
 
 # Application definition
