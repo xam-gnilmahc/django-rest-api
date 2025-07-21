@@ -30,7 +30,11 @@ SECRET_KEY = "7reb9d$g$mhgw0_)@y%+jh=$bnj9f*)v4zz1b4b-p+^^=zd8(d"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['django-rest-api-8c23.onrender.com','shopverse-dev.netlify.app']
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    # "50ed489134ad.ngrok-free.app",  # Add your ngrok domain here
+]
 
 
 # Application definition
@@ -102,16 +106,28 @@ WSGI_APPLICATION = "DjangoRestApi.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": os.getenv("DB_NAME"),
+#         "USER": os.getenv("DB_USER"),
+#         "PASSWORD": os.getenv("DB_PASSWORD"),
+#         "HOST": os.getenv("DB_HOST"),
+#         "PORT": os.getenv("DB_PORT"),
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.uehdbhoijqdvjnrnlrlu',
+        'PASSWORD': 'Maxrai123@',
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',  # e.g., db.uehdbhoijqdvjnrnlrlu.supabase.co
+        'PORT': '6543',
     }
 }
+
 
 
 # Password validation
