@@ -1,6 +1,7 @@
 from tutorials.models.payment_log import PaymentLog
 from django.utils.timezone import now
 
+
 class PaymentLogRepository:
     def create_log(self, data: dict):
         return PaymentLog.objects.create(

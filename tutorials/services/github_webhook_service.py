@@ -9,6 +9,7 @@ from tutorials.repositories.github_pr_log_repository import GithubPRLogRepositor
 
 logger = logging.getLogger(__name__)
 
+
 class GithubWebhookService:
     def __init__(self, request: HttpRequest, secret: bytes):
         self.request = request

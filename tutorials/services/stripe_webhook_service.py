@@ -3,6 +3,7 @@ import stripe
 import json
 from tutorials.repositories.payment_log_repository import PaymentLogRepository
 
+
 class StripeWebhookService:
     def __init__(self, payload: bytes, sig_header: str):
         self.payload = payload
@@ -16,15 +17,15 @@ class StripeWebhookService:
         )
 
     def process_event(self, event):
-        data = event['data']['object']
-        event_type = event['type']
+        data = event["data"]["object"]
+        event_type = event["type"]
 
         # Map event type to status
-        if event_type == 'payment_intent.created':
+        if event_type == "payment_intent.created":
             status = "2"
-        elif event_type == 'payment_intent.succeeded':
+        elif event_type == "payment_intent.succeeded":
             status = "1"
-        elif event_type == 'payment_intent.payment_failed':
+        elif event_type == "payment_intent.payment_failed":
             status = "0"
         else:
             return {"skip": True, "event_type": event_type}

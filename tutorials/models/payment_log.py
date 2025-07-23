@@ -1,4 +1,3 @@
-
 from django.db import models
 
 
@@ -13,7 +12,7 @@ class PaymentLog(models.Model):
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="2")
 
     response_data = models.TextField(blank=True, null=True)  # full gateway response
-    request_data = models.TextField(blank=True, null=True)   # request sent to gateway
+    request_data = models.TextField(blank=True, null=True)  # request sent to gateway
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

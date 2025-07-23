@@ -33,8 +33,8 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    'django-rest-api-8c23.onrender.com',
-    'shopverse-dev.netlify.app'
+    "django-rest-api-8c23.onrender.com",
+    "shopverse-dev.netlify.app",
     # "50ed489134ad.ngrok-free.app",  # Add your ngrok domain here
 ]
 
@@ -120,17 +120,15 @@ WSGI_APPLICATION = "DjangoRestApi.wsgi.application"
 # }
 
 DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+    "default": {
+        "ENGINE": os.getenv("DB_ENGINE"),
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
-
-
 
 
 # Password validation
