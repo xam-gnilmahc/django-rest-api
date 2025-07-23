@@ -12,60 +12,45 @@ logger = logging.getLogger(__name__)
 
 class GithubWebhookService:
     def __init__(self, request: HttpRequest, secret: bytes):
-        self.request = request
+        self.req = request
         self.secret = secret
         self.repo = GithubPRLogRepository()
 
     def validate_signature(self) -> bool:
-        signature = self.request.headers.get("X-Hub-Signature-256")
-        if not signature:
-            logger.warning("Missing signature")
+        sig = self.req.headers.get("X-Hub-Signature-256")
+        if not sig:
             return False
-
-        body = self.request.body
-        expected = "sha256=" + hmac.new(self.secret, body, hashlib.sha256).hexdigest()
-
-        if not hmac.compare_digest(expected, signature):
-            logger.warning("Invalid signature")
-            return False
-        return True
+        expected = (
+            "sha256=" + hmac.new(self.secret, self.req.body, hashlib.sha256).hexdigest()
+        )
+        return hmac.compare_digest(expected, sig)
 
     def is_duplicate(self) -> bool:
-        delivery_id = self.request.headers.get("X-GitHub-Delivery")
-        return self.repo.exists_by_delivery_id(delivery_id)
+        return self.repo.exists_by_delivery_id(
+            self.req.headers.get("X-GitHub-Delivery")
+        )
 
     def extract_payload(self) -> dict:
-        body = self.request.body
-        body_str = body.decode("utf-8")
-        logger.info(f"Raw request body: {body_str!r}")
-
-        if body_str.startswith("payload="):
-            parsed = urllib.parse.parse_qs(body_str)
-            payload_str = parsed.get("payload", [None])[0]
-            if payload_str is None:
-                raise ValueError("No 'payload' field in body")
-            payload = json.loads(payload_str)
-        else:
-            payload = json.loads(body_str)
-
-        return payload
+        raw = self.req.body.decode("utf-8")
+        logger.info(f"Raw request body: {raw!r}")
+        if raw.startswith("payload="):
+            return json.loads(urllib.parse.parse_qs(raw).get("payload", ["{}"])[0])
+        return json.loads(raw)
 
     def process(self) -> str:
-        delivery_id = self.request.headers.get("X-GitHub-Delivery")
         payload = self.extract_payload()
-        pr = payload["pull_request"]
-
-        data = {
-            "delivery_id": delivery_id,
-            "pr_number": payload["number"],
-            "title": pr["title"],
-            "body": pr["body"],
-            "pr_url": pr["html_url"],
-            "username": pr["user"]["login"],
-            "action": payload["action"],
-            "state": pr["state"],
-            "url": pr["html_url"],
-        }
-
-        self.repo.create_log(data)
+        pr = payload.get("pull_request", {})
+        self.repo.create_log(
+            {
+                "delivery_id": self.req.headers.get("X-GitHub-Delivery"),
+                "pr_number": payload.get("number"),
+                "title": pr.get("title"),
+                "body": pr.get("body"),
+                "pr_url": pr.get("html_url"),
+                "username": pr.get("user", {}).get("login"),
+                "action": payload.get("action"),
+                "state": pr.get("state"),
+                "url": pr.get("html_url"),
+            }
+        )
         return "Pull request data logged"

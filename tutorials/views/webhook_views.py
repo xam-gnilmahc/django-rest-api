@@ -20,17 +20,13 @@ secret = b"7reb9d$g$mhgw0_)@y%+jh=$bnj9f*)v4zz1b4b-p+^^=zd8(d"
 @authentication_classes([])
 @permission_classes([AllowAny])
 def github_webhook(request):
-    service = GithubWebhookService(request, secret)
-
-    if not service.validate_signature():
-        return HttpResponseForbidden("Invalid or missing signature")
-
-    if service.is_duplicate():
-        return success_response("Duplicate webhook ignored")
-
+    svc = GithubWebhookService(request, secret)
+    if not svc.validate_signature():
+        return HttpResponseForbidden("Invalid signature")
+    if svc.is_duplicate():
+        return success_response("Duplicate")
     try:
-        message = service.process()
-        return success_response(message)
+        return success_response(svc.process())
     except Exception as e:
-        logger.error(f"Error processing webhook: {e}")
+        logger.exception("Webhook error")
         return error_response(str(e))
