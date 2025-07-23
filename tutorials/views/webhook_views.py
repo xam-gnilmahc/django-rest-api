@@ -38,6 +38,10 @@ def github_webhook(request):
     if not hmac.compare_digest(expected_signature, signature):
         logger.warning("Invalid signature")
         return HttpResponseForbidden("Invalid signature")
+    
+    delivery_id = request.headers.get("X-GitHub-Delivery")
+    if GithubPRLog.objects.filter(delivery_id=delivery_id).exists():
+        return success_response("Duplicate webhook ignored")
 
     try:
         body_str = body.decode("utf-8")
@@ -63,6 +67,7 @@ def github_webhook(request):
         url = pr["html_url"]
 
         GithubPRLog.objects.create(
+            delivery_id=delivery_id,
             pr_number=pr_number,
             title=title,
             body=pr_body,
