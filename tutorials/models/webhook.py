@@ -2,6 +2,7 @@ from django.db import models
 
 
 class GithubPRLog(models.Model):
+    delivery_id = models.CharField(max_length=100, unique=True, null=True)
     pr_number = models.IntegerField()
     title = models.CharField(max_length=512, null=True)
     body = models.TextField(blank=True, null=True)
