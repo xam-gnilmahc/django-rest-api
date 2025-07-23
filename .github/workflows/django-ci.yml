@@ -27,9 +27,10 @@ jobs:
           --health-retries=3
 
     env:
+      DB_ENGINE: django.db.backends.mysql
       DB_NAME: mydb
       DB_USER: root
-      DB_PASSWORD: ""  # Empty password for CI
+      DB_PASSWORD: ""
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DEBUG: 'True'
