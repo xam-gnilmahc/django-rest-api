@@ -33,6 +33,8 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    'django-rest-api-8c23.onrender.com',
+    'shopverse-dev.netlify.app'
     # "50ed489134ad.ngrok-free.app",  # Add your ngrok domain here
 ]
 
