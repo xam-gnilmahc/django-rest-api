@@ -1,5 +1,5 @@
 
-A Django REST APIs project with thgthgthgh MySQL database support, environment configuration, and CI/CD integration.
+A Django REST APIs projecta with thgthgthgh MySQL database support, environment configuration, and CI/CD integration.
 
 📦 Install dependencies: `pip install -r requirements.txt`
 - 🔁 Apply database migrations: `python manage.py migrate`
