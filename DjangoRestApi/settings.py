@@ -14,6 +14,7 @@ import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qsl
 
 load_dotenv()
 
@@ -119,17 +120,30 @@ WSGI_APPLICATION = "DjangoRestApi.wsgi.application"
 #     }
 # }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": os.getenv("DB_ENGINE"),
+#         "NAME": os.getenv("DB_NAME"),
+#         "USER": os.getenv("DB_USER"),
+#         "PASSWORD": os.getenv("DB_PASSWORD"),
+#         "HOST": os.getenv("DB_HOST"),
+#         "PORT": os.getenv("DB_PORT"),
+#     }
+# }
+
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("DB_ENGINE"),
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "NAME": tmpPostgres.path.replace("/", ""),
+        "USER": tmpPostgres.username,
+        "PASSWORD": tmpPostgres.password,
+        "HOST": tmpPostgres.hostname,
+        "PORT": 5432,
+        "OPTIONS": dict(parse_qsl(tmpPostgres.query)),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
