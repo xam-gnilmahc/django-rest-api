@@ -10,3 +10,4 @@ flake8
 isort
 gunicorn
 stripe
+typing
