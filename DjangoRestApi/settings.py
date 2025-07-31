@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     # CORS
     "corsheaders",
     "rest_framework_simplejwt",
+    "schema_viewer",
 ]
 
 REST_FRAMEWORK = {
@@ -182,7 +183,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Asia/Kathmandu"
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
