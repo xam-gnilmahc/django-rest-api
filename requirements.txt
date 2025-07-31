@@ -11,3 +11,4 @@ isort
 gunicorn
 stripe
 typing
+django-schema-viewer
