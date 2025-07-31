@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.http import HttpRequest
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -12,14 +13,14 @@ from tutorials.utils.response_helper import error_response, success_response
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def login_view(request):
+def login_view(request: HttpRequest) -> Response:
     serializer = LoginSerializer(data=request.data)
     if serializer.is_valid():
-        email = serializer.validated_data["email"]
-        password = serializer.validated_data["password"]
+        email: str = serializer.validated_data["email"]
+        password: str = serializer.validated_data["password"]
 
         try:
-            user_obj = User.objects.get(email=email)
+            user_obj: User = User.objects.get(email=email)
         except User.DoesNotExist:
             return error_response(
                 "Invalid credentials.", status_code=status.HTTP_401_UNAUTHORIZED
@@ -53,11 +54,11 @@ def login_view(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
-def register_view(request):
+def register_view(request: HttpRequest) -> Response:
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         data = serializer.validated_data
-        user = User.objects.create_user(
+        user: User = User.objects.create_user(
             username=data["username"],
             email=data["email"],
             password=data["password"],

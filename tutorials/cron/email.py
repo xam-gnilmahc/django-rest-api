@@ -28,27 +28,36 @@ def generate_pr_table(entries):
 
     header = (
         "<table style='width:100%; border-collapse:collapse; font-family:sans-serif; font-size:14px; margin-top:10px;'>"
-        "<thead><tr style='background:#f2f2f2;'>"
-        "<th style='border:1px solid #ddd; padding:8px;'>PR Number</th>"
-        "<th style='border:1px solid #ddd; padding:8px;'>Title</th>"
-        "<th style='border:1px solid #ddd; padding:8px;'>User</th>"
-        "<th style='border:1px solid #ddd; padding:8px;'>Action</th>"
-        "<th style='border:1px solid #ddd; padding:8px;'>State</th>"
-        "<th style='border:1px solid #ddd; padding:8px;'>URL</th>"
-        "</tr></thead><tbody>"
+        "<thead>"
+        "<tr style='background:#e5e7eb; text-align:left; font-weight:normal;'>"
+        "<th style='padding:10px 12px;'>PR Number</th>"
+        "<th style='padding:10px 12px;'>Title</th>"
+        "<th style='padding:10px 12px;'>User</th>"
+        "<th style='padding:10px 12px;'>Action</th>"
+        "<th style='padding:10px 12px;'>State</th>"
+        "<th style='padding:10px 12px;'>URL</th>"
+        "</tr>"
+        "</thead>"
+        "<tbody>"
     )
+
     rows = "".join(
-        f"<tr>"
-        f"<td style='border:1px solid #ddd; padding:8px;'>{e.pr_number}</td>"
-        f"<td style='border:1px solid #ddd; padding:8px;'>{e.title}</td>"
-        f"<td style='border:1px solid #ddd; padding:8px;'>{e.username}</td>"
-        f"<td style='border:1px solid #ddd; padding:8px;'>{e.action}</td>"
-        f"<td style='border:1px solid #ddd; padding:8px;'>{e.state}</td>"
-        f"<td style='border:1px solid #ddd; padding:8px;'><a href='{e.url}'>View PR</a></td>"
+        f"<tr style='background:#fff; transition:background-color 0.3s;' "
+        f"onmouseover=\"this.style.backgroundColor='#f9fafb';\" "
+        f"onmouseout=\"this.style.backgroundColor='#fff';\">"
+        f"<td style='padding:10px 12px; color:#444;'>{e.pr_number}</td>"
+        f"<td style='padding:10px 12px; color:#444;'>{e.title}</td>"
+        f"<td style='padding:10px 12px; color:#444;'>{e.username}</td>"
+        f"<td style='padding:10px 12px; color:#444;'>{e.action}</td>"
+        f"<td style='padding:10px 12px; color:#444;'>{e.state}</td>"
+        f"<td style='padding:10px 12px;'><a href='{e.url}' "
+        f"style='color:#1a73e8; text-decoration:none;' target='_blank'>View PR</a></td>"
         f"</tr>"
         for e in entries
     )
+
     footer = "</tbody></table>"
+
     return header + rows + footer
 
 
@@ -67,7 +76,9 @@ def send_summary_email(request):
             datetime.combine(today - timedelta(days=1), datetime.max.time())
         )
 
-        pr_logs = GithubPRLog.objects.filter(created_at__range=(start, end))
+        pr_logs = GithubPRLog.objects.filter(
+            created_at__range=(start, end), action="opened"
+        )
 
         if not pr_logs.exists():
             return JsonResponse({"message": "No PR logs for yesterday."})
