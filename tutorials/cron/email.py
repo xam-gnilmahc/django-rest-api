@@ -20,7 +20,18 @@ SERVICE_ID = os.getenv("EMAILJS_SERVICE_ID")
 TEMPLATE_ID = os.getenv("EMAILJS_TEMPLATE_ID")
 PUBLIC_KEY = os.getenv("EMAILJS_PUBLIC_KEY")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+ORG_NAME = os.getenv("ORG_NAME")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
+
+HEADERS = {
+    'Authorization': f'Bearer {GITHUB_TOKEN}',
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+}
+
+SKIP_REPOS = ['test-11']
+KEEP_BRANCHES = ['production', 'main', 'staging', 'development']
 
 def generate_pr_table(entries):
     if not entries:
@@ -110,3 +121,52 @@ def send_summary_email(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+@api_view(["GET"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def GitHubCleanBranches(self, request):
+        try:
+            #Fetch all repositories
+            repos_url = f'https://api.github.com/orgs/{ORG_NAME}/repos?per_page=100'
+            repos_res = requests.get(repos_url, headers=HEADERS)
+            repos = repos_res.json()
+
+            deleted_branches = {}
+
+            for repo in repos:
+                repo_name = repo['name']
+                if repo_name in SKIP_REPOS or repo.get('archived'):
+                    continue
+
+                #Get branches
+                branches_url = f'https://api.github.com/repos/{ORG_NAME}/{repo_name}/branches'
+                branches_res = requests.get(branches_url, headers=HEADERS)
+                branches = branches_res.json()
+
+                for branch in branches:
+                    branch_name = branch['name']
+
+                    if branch_name in KEEP_BRANCHES:
+                        continue
+
+                    #Remove protection if protected
+                    if branch.get('protected'):
+                        protection_url = f'https://api.github.com/repos/{ORG_NAME}/{repo_name}/branches/{branch_name}/protection'
+                        requests.delete(protection_url, headers=HEADERS)
+
+                    #Delete the branch
+                    ref_url = f'https://api.github.com/repos/{ORG_NAME}/{repo_name}/git/refs/heads/{branch_name}'
+                    delete_res = requests.delete(ref_url, headers=HEADERS)
+
+                    if delete_res.status_code == 204:
+                        deleted_branches.setdefault(repo_name, []).append(branch_name)
+
+            return JsonResponse({
+                'message': 'Branches deleted successfully',
+                'deleted': deleted_branches
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
