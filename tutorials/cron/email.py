@@ -128,7 +128,7 @@ def send_summary_email(request):
 @api_view(["GET"])
 @authentication_classes([])
 @permission_classes([AllowAny])
-def GitHubCleanBranches(self, request):
+def GitHubCleanBranches(request):
     try:
         # Fetch all repositories
         repos_url = f"https://api.github.com/orgs/{ORG_NAME}/repos?per_page=100"
