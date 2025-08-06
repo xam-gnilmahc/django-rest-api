@@ -30,7 +30,7 @@ HEADERS = {
     "X-GitHub-Api-Version": "2022-11-28",
 }
 
-SKIP_REPOS = ["test-11"]
+SKIP_REPOS = ["test-11", "cron"]
 KEEP_BRANCHES = ["production", "main", "staging", "development"]
 
 
