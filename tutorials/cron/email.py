@@ -1,7 +1,9 @@
 # cron/email.py
+
 import os
 import requests
-from django.http import JsonResponse
+from typing import List, Dict, Optional, Any, Union
+from django.http import JsonResponse, HttpRequest, HttpResponse
 from tutorials.models.webhook import GithubPRLog
 from dotenv import load_dotenv
 from rest_framework.decorators import (
@@ -16,25 +18,24 @@ from django.views.decorators.csrf import csrf_exempt
 
 load_dotenv()
 
-SERVICE_ID = os.getenv("EMAILJS_SERVICE_ID")
-TEMPLATE_ID = os.getenv("EMAILJS_TEMPLATE_ID")
-PUBLIC_KEY = os.getenv("EMAILJS_PUBLIC_KEY")
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
-ORG_NAME = os.getenv("ORG_NAME")
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+SERVICE_ID: Optional[str] = os.getenv("EMAILJS_SERVICE_ID")
+TEMPLATE_ID: Optional[str] = os.getenv("EMAILJS_TEMPLATE_ID")
+PUBLIC_KEY: Optional[str] = os.getenv("EMAILJS_PUBLIC_KEY")
+ADMIN_EMAIL: Optional[str] = os.getenv("ADMIN_EMAIL")
+ORG_NAME: Optional[str] = os.getenv("ORG_NAME")
+GITHUB_TOKEN: Optional[str] = os.getenv("GITHUB_TOKEN")
 
-
-HEADERS = {
+HEADERS: Dict[str, str] = {
     "Authorization": f"Bearer {GITHUB_TOKEN}",
     "Accept": "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
 }
 
-SKIP_REPOS = ["test-11", "cron"]
-KEEP_BRANCHES = ["production", "main", "staging", "development"]
+SKIP_REPOS: List[str] = ["test-11", "cron"]
+KEEP_BRANCHES: List[str] = ["production", "main", "staging", "development"]
 
 
-def generate_pr_table(entries):
+def generate_pr_table(entries: List[GithubPRLog]) -> str:
     if not entries:
         return "<p>No pull requests for today.</p>"
 
@@ -49,8 +50,7 @@ def generate_pr_table(entries):
         "<th style='padding:10px 12px;'>State</th>"
         "<th style='padding:10px 12px;'>URL</th>"
         "</tr>"
-        "</thead>"
-        "<tbody>"
+        "</thead><tbody>"
     )
 
     rows = "".join(
@@ -69,7 +69,6 @@ def generate_pr_table(entries):
     )
 
     footer = "</tbody></table>"
-
     return header + rows + footer
 
 
@@ -77,9 +76,8 @@ def generate_pr_table(entries):
 @api_view(["GET"])
 @authentication_classes([])
 @permission_classes([AllowAny])
-def send_summary_email(request):
+def send_summary_email(request: HttpRequest) -> HttpResponse:
     try:
-        # Time range for yesterday
         today = datetime.now().date()
         start = make_aware(
             datetime.combine(today - timedelta(days=1), datetime.min.time())
@@ -95,9 +93,9 @@ def send_summary_email(request):
         if not pr_logs.exists():
             return JsonResponse({"message": "No PR logs for yesterday."})
 
-        pr_html = generate_pr_table(pr_logs)
+        pr_html: str = generate_pr_table(list(pr_logs))
 
-        payload = {
+        payload: Dict[str, Union[str, Dict[str, str]]] = {
             "service_id": SERVICE_ID,
             "template_id": TEMPLATE_ID,
             "user_id": PUBLIC_KEY,
@@ -128,39 +126,34 @@ def send_summary_email(request):
 @api_view(["GET"])
 @authentication_classes([])
 @permission_classes([AllowAny])
-def GitHubCleanBranches(request):
+def GitHubCleanBranches(request: HttpRequest) -> HttpResponse:
     try:
-        # Fetch all repositories
-        repos_url = f"https://api.github.com/orgs/{ORG_NAME}/repos?per_page=100"
+        repos_url: str = f"https://api.github.com/orgs/{ORG_NAME}/repos?per_page=100"
         repos_res = requests.get(repos_url, headers=HEADERS)
-        repos = repos_res.json()
+        repos: List[Dict[str, Any]] = repos_res.json()
 
-        deleted_branches = {}
+        deleted_branches: Dict[str, List[str]] = {}
 
         for repo in repos:
-            repo_name = repo["name"]
+            repo_name: str = repo["name"]
             if repo_name in SKIP_REPOS or repo.get("archived"):
                 continue
 
-            # Get branches
-            branches_url = (
+            branches_url: str = (
                 f"https://api.github.com/repos/{ORG_NAME}/{repo_name}/branches"
             )
             branches_res = requests.get(branches_url, headers=HEADERS)
-            branches = branches_res.json()
+            branches: List[Dict[str, Any]] = branches_res.json()
 
             for branch in branches:
-                branch_name = branch["name"]
-
+                branch_name: str = branch["name"]
                 if branch_name in KEEP_BRANCHES:
                     continue
 
-                # Remove protection if protected
                 if branch.get("protected"):
                     protection_url = f"https://api.github.com/repos/{ORG_NAME}/{repo_name}/branches/{branch_name}/protection"
                     requests.delete(protection_url, headers=HEADERS)
 
-                # Delete the branch
                 ref_url = f"https://api.github.com/repos/{ORG_NAME}/{repo_name}/git/refs/heads/{branch_name}"
                 delete_res = requests.delete(ref_url, headers=HEADERS)
 
