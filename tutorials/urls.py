@@ -7,7 +7,8 @@ from tutorials.views.user_payment_views import userPaymentGateway_list
 from tutorials.views.webhook_views import github_webhook
 from tutorials.views.stripe_webhook import stripe_webhook
 from tutorials.cron.email import send_summary_email, GitHubCleanBranches
-from  tutorials.views.dashboard_views import payment_analytics
+from tutorials.views.dashboard_views import payment_analytics
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     # Auth routes

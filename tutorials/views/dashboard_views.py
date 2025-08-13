@@ -1,11 +1,17 @@
 from django.db.models import Sum, Count, Case, When, FloatField
-from django.db.models.functions import TruncDate, TruncMonth, ExtractWeekDay, ExtractHour
+from django.db.models.functions import (
+    TruncDate,
+    TruncMonth,
+    ExtractWeekDay,
+    ExtractHour,
+)
 from django.utils.timezone import now
 from datetime import timedelta
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from tutorials.utils.response_helper import error_response, success_response
 from tutorials.models.payment_log import PaymentLog
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -15,13 +21,15 @@ def payment_analytics(request):
         success_payments = PaymentLog.objects.filter(status="1")
 
         # Calculate total earnings
-        total_earned = success_payments.aggregate(total=Sum('amount'))['total'] or 0
+        total_earned = success_payments.aggregate(total=Sum("amount"))["total"] or 0
 
         # Count total successful transactions
         total_transactions = success_payments.count()
 
         # Calculate average transaction value
-        average_transaction = total_earned / total_transactions if total_transactions else 0
+        average_transaction = (
+            total_earned / total_transactions if total_transactions else 0
+        )
 
         # Calculate date 7 days ago for filtering
         seven_days_ago = now() - timedelta(days=7)
@@ -31,80 +39,82 @@ def payment_analytics(request):
 
         # Line chart: revenue per day for last 7 days
         line_chart = (
-            success_payments
-            .filter(created_at__gte=seven_days_ago)
-            .annotate(day=TruncDate('created_at'))
-            .values('day')
-            .annotate(total=Sum('amount'))
-            .order_by('day')
+            success_payments.filter(created_at__gte=seven_days_ago)
+            .annotate(day=TruncDate("created_at"))
+            .values("day")
+            .annotate(total=Sum("amount"))
+            .order_by("day")
         )
 
         # Pie chart: revenue grouped by payment gateway (all time)
         pie_chart = (
-            success_payments
-            .values('payment_gateway_name')
-            .annotate(total=Sum('amount'))
-            .order_by('-total')
+            success_payments.values("payment_gateway_name")
+            .annotate(total=Sum("amount"))
+            .order_by("-total")
         )
 
         # Bar chart: transaction counts per day for last 7 days
         bar_chart = (
-            success_payments
-            .filter(created_at__gte=seven_days_ago)
-            .annotate(day=TruncDate('created_at'))
-            .values('day')
-            .annotate(count=Count('id'))
-            .order_by('day')
+            success_payments.filter(created_at__gte=seven_days_ago)
+            .annotate(day=TruncDate("created_at"))
+            .values("day")
+            .annotate(count=Count("id"))
+            .order_by("day")
         )
 
         # Weekday stats: revenue and transactions by weekday
         weekday_stats = (
-            success_payments
-            .annotate(weekday=ExtractWeekDay('created_at'))  # Sunday=1 .. Saturday=7
-            .values('weekday')
+            success_payments.annotate(
+                weekday=ExtractWeekDay("created_at")
+            )  # Sunday=1 .. Saturday=7
+            .values("weekday")
             .annotate(
-                total_amount=Sum('amount'),
-                transaction_count=Count('id'),
+                total_amount=Sum("amount"),
+                transaction_count=Count("id"),
             )
-            .order_by('weekday')
+            .order_by("weekday")
         )
 
         # Monthly revenue (last 6 months)
         monthly_revenue = (
-            success_payments
-            .filter(created_at__gte=six_months_ago)
-            .annotate(month=TruncMonth('created_at'))
-            .values('month')
-            .annotate(total=Sum('amount'))
-            .order_by('month')
+            success_payments.filter(created_at__gte=six_months_ago)
+            .annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(total=Sum("amount"))
+            .order_by("month")
         )
 
         # Refunds and failed payments summary
-        total_refunded = PaymentLog.objects.filter(status="3").aggregate(total=Sum('amount'))['total'] or 0
+        total_refunded = (
+            PaymentLog.objects.filter(status="3").aggregate(total=Sum("amount"))[
+                "total"
+            ]
+            or 0
+        )
         failed_transactions = PaymentLog.objects.filter(status="3").count()
         total_attempts = total_transactions + failed_transactions
-        success_ratio = (total_transactions / total_attempts) if total_attempts > 0 else 0
+        success_ratio = (
+            (total_transactions / total_attempts) if total_attempts > 0 else 0
+        )
 
         # Payment gateway success rate
         gateway_stats = (
-            PaymentLog.objects
-            .values('payment_gateway_name')
+            PaymentLog.objects.values("payment_gateway_name")
             .annotate(
-                total=Count('id'),
+                total=Count("id"),
                 success=Count(Case(When(status="1", then=1))),
-                success_rate=100 * Count(Case(When(status="1", then=1))) / Count('id'),
+                success_rate=100 * Count(Case(When(status="1", then=1))) / Count("id"),
             )
-            .order_by('-success_rate')
+            .order_by("-success_rate")
         )
 
         # Hourly transaction distribution (last 7 days)
         hourly_transactions = (
-            success_payments
-            .filter(created_at__gte=seven_days_ago)
-            .annotate(hour=ExtractHour('created_at'))
-            .values('hour')
-            .annotate(count=Count('id'))
-            .order_by('hour')
+            success_payments.filter(created_at__gte=seven_days_ago)
+            .annotate(hour=ExtractHour("created_at"))
+            .values("hour")
+            .annotate(count=Count("id"))
+            .order_by("hour")
         )
 
         return success_response(
@@ -126,7 +136,7 @@ def payment_analytics(request):
                 # "top_customers": list(top_customers),
                 "gateway_stats": list(gateway_stats),
                 "hourly_transactions": list(hourly_transactions),
-            }
+            },
         )
     except Exception as e:
         return error_response(str(e))
