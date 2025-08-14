@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     "django-rest-api-8c23.onrender.com",
     "shopverse-dev.netlify.app",
     "http://localhost:3000",
-    "https://djangofrontend.netlify.app,
+    "https://djangofrontend.netlify.app",
     # "50ed489134ad.ngrok-free.app",  # Add your ngrok domain here
 ]
 
