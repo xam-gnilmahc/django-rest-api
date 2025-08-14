@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
     "django-rest-api-8c23.onrender.com",
     "shopverse-dev.netlify.app",
     "http://localhost:3000",
+    "https://djangofrontend.netlify.app,
     # "50ed489134ad.ngrok-free.app",  # Add your ngrok domain here
 ]
 
@@ -89,7 +90,9 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000",
-    "http://localhost:8081",  # keep if you use this too
+    "http://localhost:8081",
+    "https://djangofrontend.netlify.app",
+    # keep if you use this too
 )
 
 
