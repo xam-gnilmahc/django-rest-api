@@ -17,6 +17,7 @@ from urllib.parse import urlencode
 GOOGLE_AUTH_URI = settings.GOOGLE_AUTH_URI
 GOOGLE_TOKEN_URI = settings.GOOGLE_TOKEN_URI
 GOOGLE_USERINFO_URI = settings.GOOGLE_USERINFO_URI
+FRONTEND_REDIRECT_URL = settings.FRONTEND_REDIRECT_URL
 
 
 @api_view(["GET"])
@@ -46,7 +47,8 @@ def google_callback_view(request: HttpRequest) -> Response:
     """
     code: Optional[str] = request.GET.get("code")
     if not code:
-        return error_response("Missing authorization code.", status_code=400)
+        params = urlencode({"message": "Missing authorization code"})
+        return redirect(f"{FRONTEND_REDIRECT_URL}/login?{params}")
 
     token_data: Dict[str, str] = {
         "code": code,
@@ -75,30 +77,38 @@ def google_callback_view(request: HttpRequest) -> Response:
     email: Optional[str] = user_info.get("email")
 
     if not email:
-        return error_response("Email not available in Google response", status_code=400)
+        #return error_response("Email not available in Google response", status_code=400)
+        params = urlencode({"message": "Email not available from Google"})
+        return redirect(f"{FRONTEND_REDIRECT_URL}/login?{params}")
 
     try:
         user: User = User.objects.get(email=email)
     except User.DoesNotExist:
-        return error_response(
-            "No account associated with this Google email. Contact your admin.",
-            status_code=403,
-        )
+        # return error_response(
+        #     "No account associated with this Google email. Contact your admin.",
+        #     status_code=403,
+        # )
+        params = urlencode({"message": "No account associated with this Google email"})
+        return redirect(f"{FRONTEND_REDIRECT_URL}/login?{params}")
 
     refresh: RefreshToken = RefreshToken.for_user(user)
-    return success_response(
-        "Login successful via Google.",
-        data={
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-            },
-            "tokens": {
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
-            },
-        },
+    # return success_response(
+    #     "Login successful via Google.",
+    #     data={
+    #         "accessToken": {
+    #             "access": str(refresh.access_token),
+    #             "refresh": str(refresh),
+    #         },
+    #     },
+    # )
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
+    # ✅ Redirect back to React app with tokens in query params
+    query_params = urlencode(
+        {
+            "access": access_token,
+            "refresh": refresh_token,
+        }
     )
+    return redirect(f"{FRONTEND_REDIRECT_URL}/verify?{query_params}")
