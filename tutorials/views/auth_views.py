@@ -111,4 +111,5 @@ def google_callback_view(request: HttpRequest) -> Response:
             "refresh": refresh_token,
         }
     )
+    print(FRONTEND_REDIRECT_URL)
     return redirect(f"{FRONTEND_REDIRECT_URL}/verify?{query_params}")
