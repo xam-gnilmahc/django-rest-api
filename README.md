@@ -7,5 +7,3 @@ A Django REST APIs project with the MySQL database supports, environment configu
 - 🎨 Format code using Black: `black .`
 - 🛠 Uses `.env` for environment variables like database credentials and secret key
 - ⚙️ GitHub Actions handles lint checks and automated testing on each push or pull request
-
-This setup ensures consistent code quality and a smooth local + CI development workflow.
