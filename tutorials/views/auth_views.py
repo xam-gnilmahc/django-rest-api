@@ -77,7 +77,7 @@ def google_callback_view(request: HttpRequest) -> Response:
     email: Optional[str] = user_info.get("email")
 
     if not email:
-        #return error_response("Email not available in Google response", status_code=400)
+        # return error_response("Email not available in Google response", status_code=400)
         params = urlencode({"message": "Email not available from Google"})
         return redirect(f"{FRONTEND_REDIRECT_URL}/login?{params}")
 
@@ -92,6 +92,9 @@ def google_callback_view(request: HttpRequest) -> Response:
         return redirect(f"{FRONTEND_REDIRECT_URL}/login?{params}")
 
     refresh: RefreshToken = RefreshToken.for_user(user)
+    refresh["username"] = user.username
+    refresh["email"] = user.email
+
     # return success_response(
     #     "Login successful via Google.",
     #     data={
