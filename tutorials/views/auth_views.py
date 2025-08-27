@@ -12,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
 from tutorials.utils.response_helper import error_response, success_response
 from urllib.parse import urlencode
+from django.utils import timezone
 
 # Google OAuth endpoints
 GOOGLE_AUTH_URI = settings.GOOGLE_AUTH_URI
@@ -91,6 +92,9 @@ def google_callback_view(request: HttpRequest) -> Response:
         params = urlencode({"message": "No account associated with this Google email"})
         return redirect(f"{FRONTEND_REDIRECT_URL}/login?{params}")
 
+    user.last_login = timezone.now()
+    user.save(update_fields=['last_login'])
+    
     refresh: RefreshToken = RefreshToken.for_user(user)
     refresh["username"] = user.username
     refresh["email"] = user.email
