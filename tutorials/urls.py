@@ -8,10 +8,12 @@ from tutorials.views.webhook_views import github_webhook
 from tutorials.views.stripe_webhook import stripe_webhook
 from tutorials.cron.email import send_summary_email, GitHubCleanBranches
 from tutorials.views.dashboard_views import payment_analytics
+from tutorials.views.booko_info import get_book_info
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     # Auth routes
+    path("api/book", get_book_info, name="get_book_info"),
     path("api/google/redirect", google_redirect_view, name="redirect"),
     path("api/google/callback", google_callback_view, name="callback"),
     path("api/github/feed", github_webhook, name="github_Webhook"),
