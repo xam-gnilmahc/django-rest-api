@@ -37,36 +37,41 @@ KEEP_BRANCHES: List[str] = ["production", "main", "staging", "development"]
 
 def generate_pr_table(entries: List[GithubPRLog]) -> str:
     if not entries:
-        return "<p>No pull requests for today.</p>"
+        return "<p style='font-family:sans-serif; color:#374151;'>No pull requests for today.</p>"
 
     header = (
-        "<table style='width:100%; border-collapse:collapse; font-family:sans-serif; font-size:14px; margin-top:10px;'>"
+        "<table style='width:100%; border-collapse:collapse; "
+        "font-family:ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont; "
+        "font-size:14px; margin-top:12px; border:1px solid #e5e7eb;'>"
         "<thead>"
-        "<tr style='background:#e5e7eb; text-align:left; font-weight:normal;'>"
-        "<th style='padding:10px 12px;'>PR Number</th>"
-        "<th style='padding:10px 12px;'>Title</th>"
-        "<th style='padding:10px 12px;'>User</th>"
-        "<th style='padding:10px 12px;'>Action</th>"
-        "<th style='padding:10px 12px;'>State</th>"
-        "<th style='padding:10px 12px;'>URL</th>"
+        "<tr style='background-color:#f3f4f6; color:#111827;'>"
+        "<th style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>PR #</th>"
+        "<th style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>Title</th>"
+        "<th style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>User</th>"
+        "<th style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>Action</th>"
+        "<th style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>State</th>"
+        "<th style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>Link</th>"
         "</tr>"
         "</thead><tbody>"
     )
 
-    rows = "".join(
-        f"<tr style='background:#fff; transition:background-color 0.3s;' "
-        f"onmouseover=\"this.style.backgroundColor='#f9fafb';\" "
-        f"onmouseout=\"this.style.backgroundColor='#fff';\">"
-        f"<td style='padding:10px 12px; color:#444;'>{e.pr_number}</td>"
-        f"<td style='padding:10px 12px; color:#444;'>{e.title}</td>"
-        f"<td style='padding:10px 12px; color:#444;'>{e.username}</td>"
-        f"<td style='padding:10px 12px; color:#444;'>{e.action}</td>"
-        f"<td style='padding:10px 12px; color:#444;'>{e.state}</td>"
-        f"<td style='padding:10px 12px;'><a href='{e.url}' "
-        f"style='color:#1a73e8; text-decoration:none;' target='_blank'>View PR</a></td>"
-        f"</tr>"
-        for e in entries
-    )
+    rows = ""
+    for i, e in enumerate(entries):
+        bg = "#ffffff" if i % 2 == 0 else "#f9fafb"  # zebra rows
+
+        rows += (
+            f"<tr style='background-color:{bg}; color:#374151;'>"
+            f"<td style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>{e.pr_number}</td>"
+            f"<td style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>{e.title}</td>"
+            f"<td style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>{e.username}</td>"
+            f"<td style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>{e.action}</td>"
+            f"<td style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>{e.state}</td>"
+            f"<td style='padding:10px 12px; border-bottom:1px solid #e5e7eb;'>"
+            f"<a href='{e.url}' "
+            f"style='color:#2563eb; text-decoration:none; font-weight:500;' "
+            f"target='_blank'>View PR</a></td>"
+            f"</tr>"
+        )
 
     footer = "</tbody></table>"
     return header + rows + footer
