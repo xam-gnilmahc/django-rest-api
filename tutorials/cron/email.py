@@ -92,7 +92,7 @@ def send_summary_email(request: HttpRequest) -> HttpResponse:
         )
 
         pr_logs = GithubPRLog.objects.filter(
-            created_at__range=(start, end), action="opened"
+            action="opened"
         )
 
         if not pr_logs.exists():
